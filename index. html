@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wira Siaga Pro | SMK Negeri 11</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0c4a6e;
+            color: #f1f5f9;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Mencegah scroll pada body utama */
+        }
+
+        /* Latar Belakang Gambar Utama */
+        .bg-main {
+            background-image: linear-gradient(rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.4)), 
+                              url('https://api.clippath.ai/storage/v1/object/public/images/17781256500833187044371617686658.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .menu-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            background: rgba(14, 165, 233, 0.3);
+            border-color: rgba(14, 165, 233, 0.5);
+        }
+
+        .btn-blue {
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            transition: all 0.2s;
+        }
+
+        .btn-blue:hover {
+            filter: brightness(1.1);
+            transform: scale(1.02);
+        }
+
+        .btn-action:active {
+            transform: scale(0.95);
+        }
+
+        /* Animasi Kustom */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Latar Belakang -->
+    <div class="bg-main">
+        
+        <!-- Audio Element -->
+        <audio id="bgMusic" loop>
+            <source src="https://github.com/k054sihengkos-design/Laguprojekgim/raw/refs/heads/main/The_Scholar_s_Dawn.mp3" type="audio/mpeg">
+        </audio>
+
+        <div id="app-container" class="max-w-4xl w-full glass-panel rounded-[2.5rem] overflow-hidden relative m-4 flex flex-col max-h-[90vh]">
+            
+            <!-- Dashboard Header (Sembunyi saat login) -->
+            <div id="dashboard" class="hidden bg-sky-950/80 p-4 flex justify-between items-center border-b border-white/10">
+                <div class="flex flex-col">
+                    <span class="text-[10px] text-sky-300 font-bold uppercase tracking-widest">Identitas Siswa</span>
+                    <span id="display-identity" class="font-bold text-sm text-white">Nama (Kelas)</span>
+                </div>
+                <div class="flex gap-4 items-center">
+                    <div class="bg-black/30 px-4 py-1 rounded-xl border border-white/10 flex items-center gap-2">
+                        <span class="text-xs">⏱️</span>
+                        <span id="timer" class="font-mono font-bold text-sky-400">00:00</span>
+                    </div>
+                    <div class="bg-yellow-500 px-4 py-1 rounded-xl text-black flex items-center gap-2">
+                        <span class="text-xs font-bold uppercase">Skor</span>
+                        <span id="live-score" class="font-black text-lg">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kontrol Musik (Floating) -->
+            <button id="musicBtn" onclick="toggleMusic()" class="absolute top-4 right-4 z-50 bg-white/10 p-2 rounded-full hover:bg-white/20 transition-all hidden">
+                <span id="musicStatus" class="text-xl">🔇</span>
+            </button>
+
+            <main id="main-content" class="flex-grow p-6 md:p-10 flex flex-col justify-center overflow-y-auto">
+                
+                <!-- 1. LOGIN SCREEN -->
+                <div id="screen-login" class="text-center space-y-6 animate-fade">
+                    <div class="space-y-4">
+                        <div class="inline-block bg-sky-500/20 p-6 rounded-full border border-sky-400/30">
+                            <img src="https://api.clippath.ai/storage/v1/object/public/images/17781256500833187044371617686658.jpg" alt="Logo" class="w-24 h-24 rounded-full object-cover border-2 border-yellow-400">
+                        </div>
+                        <h1 class="text-5xl font-black tracking-tighter text-white drop-shadow-lg">WIRA SIAGA</h1>
+                        <div class="bg-yellow-400 text-black px-4 py-1 rounded-lg inline-block font-bold text-sm">KELAS X SMK</div>
+                    </div>
+                    
+                    <div class="max-w-sm mx-auto space-y-3">
+                        <input type="text" id="in-name" placeholder="Nama Lengkap" class="w-full bg-black/40 border border-white/20 p-4 rounded-2xl outline-none focus:ring-2 focus:ring-sky-500 text-white placeholder:text-slate-400 transition-all">
+                        <input type="text" id="in-class" placeholder="Kelas (Contoh: X SMK 1)" class="w-full bg-black/40 border border-white/20 p-4 rounded-2xl outline-none focus:ring-2 focus:ring-sky-500 text-white placeholder:text-slate-400 transition-all">
+                        <button onclick="handleLogin()" class="w-full btn-blue text-white py-4 rounded-2xl font-bold text-xl shadow-xl btn-action mt-2">
+                            Mulai Belajar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. MAIN MENU -->
+                <div id="screen-menu" class="hidden space-y-8 animate-fade">
+                    <div class="text-center">
+                        <h2 class="text-3xl font-black text-white">Pilih Aktivitas</h2>
+                        <p class="text-sky-200">Silakan pilih menu utama di bawah ini</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <button onclick="showObjectives()" class="menu-card p-8 rounded-[2rem] flex flex-col items-center text-center space-y-4">
+                            <span class="text-5xl">📖</span>
+                            <div>
+                                <h3 class="font-bold text-xl text-white">Tujuan</h3>
+                                <p class="text-xs text-sky-300">Target pembelajaran</p>
+                            </div>
+                        </button>
+                        <button onclick="startQuiz()" class="menu-card p-8 rounded-[2rem] flex flex-col items-center text-center space-y-4">
+                            <span class="text-5xl">✍️</span>
+                            <div>
+                                <h3 class="font-bold text-xl text-white">Latihan Soal</h3>
+                                <p class="text-xs text-sky-300">Uji pengetahuan teori</p>
+                            </div>
+                        </button>
+                        <button onclick="startGame()" class="menu-card p-8 rounded-[2rem] border-sky-400 bg-sky-900/40 flex flex-col items-center text-center space-y-4">
+                            <span class="text-5xl">🎮</span>
+                            <div>
+                                <h3 class="font-bold text-xl text-sky-400">Gim Seru</h3>
+                                <p class="text-xs text-sky-300">Simulasi tantangan</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. OBJECTIVES SCREEN -->
+                <div id="screen-objectives" class="hidden space-y-6 animate-fade">
+                    <h2 class="text-3xl font-black text-yellow-400 flex items-center gap-3">
+                        <span>📖</span> Tujuan Pembelajaran
+                    </h2>
+                    <div class="space-y-4 text-slate-100 bg-black/40 p-8 rounded-[2rem] border border-white/5">
+                        <div class="flex gap-4">
+                            <div class="bg-sky-500 h-8 w-8 rounded-full flex-shrink-0 flex items-center justify-center font-bold">1</div>
+                            <p class="text-lg">Mampu memahami konsep dasar mitigasi bencana sesuai kurikulum SMK.</p>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="bg-sky-500 h-8 w-8 rounded-full flex-shrink-0 flex items-center justify-center font-bold">2</div>
+                            <p class="text-lg">Memahami prosedur penyelamatan diri pada bencana prioritas (Gempa, Api, Banjir).</p>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="bg-sky-500 h-8 w-8 rounded-full flex-shrink-0 flex items-center justify-center font-bold">3</div>
+                            <p class="text-lg">Memiliki kesadaran tinggi akan pentingnya Tas Siaga Bencana.</p>
+                        </div>
+                    </div>
+                    <button onclick="showMenu()" class="bg-white/10 px-6 py-2 rounded-xl text-white hover:bg-white/20 transition-colors">
+                        ⬅️ Kembali ke Menu Utama
+                    </button>
+                </div>
+
+                <!-- 4. TASK CONTENT (QUIZ/GAME) -->
+                <div id="screen-task" class="hidden space-y-6 animate-fade">
+                    <div class="text-center space-y-2">
+                        <div id="task-icon" class="text-7xl mb-2"></div>
+                        <h3 id="task-title" class="text-2xl font-black text-yellow-400"></h3>
+                    </div>
+                    <div class="bg-black/60 p-8 rounded-[2.5rem] border border-white/10 shadow-inner">
+                        <p id="task-desc" class="text-xl leading-relaxed text-white font-medium text-center"></p>
+                    </div>
+                    <div id="options-box" class="grid grid-cols-1 gap-3">
+                        <!-- Pilihan jawaban -->
+                    </div>
+                </div>
+
+                <!-- 5. FEEDBACK -->
+                <div id="screen-feedback" class="hidden text-center space-y-6 animate-fade">
+                    <div id="fb-icon" class="text-9xl drop-shadow-2xl"></div>
+                    <h2 id="fb-title" class="text-5xl font-black"></h2>
+                    <div class="bg-black/40 p-6 rounded-[2rem] max-w-lg mx-auto border border-white/10">
+                        <p id="fb-text" class="text-sky-100 text-xl"></p>
+                    </div>
+                    <button id="fb-next" class="btn-blue text-white px-16 py-4 rounded-2xl font-bold text-2xl shadow-2xl btn-action">
+                        Lanjut
+                    </button>
+                </div>
+
+                <!-- 6. FINAL RESULTS -->
+                <div id="screen-result" class="hidden text-center space-y-8 animate-fade">
+                    <div class="text-8xl">🥇</div>
+                    <h2 class="text-4xl font-black text-white">Misi Selesai!</h2>
+                    
+                    <div class="flex justify-center gap-6">
+                        <div class="bg-sky-900/60 p-6 rounded-[2rem] w-44 border border-sky-400/30">
+                            <span class="block text-sky-400 text-xs font-bold uppercase mb-2">Skor Akhir</span>
+                            <span id="res-score" class="text-5xl font-black text-yellow-400">0</span>
+                        </div>
+                        <div class="bg-slate-900/60 p-6 rounded-[2rem] w-44 border border-white/10">
+                            <span class="block text-slate-400 text-xs font-bold uppercase mb-2">Total Waktu</span>
+                            <span id="res-time" class="text-3xl font-black text-white py-2">00:00</span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-3 max-w-xs mx-auto">
+                        <button onclick="location.reload()" class="bg-yellow-400 text-black py-4 rounded-2xl font-black text-lg hover:bg-yellow-300 transition-all btn-action">
+                            MAIN LAGI
+                        </button>
+                        <button onclick="showMenu()" class="bg-white/10 text-white py-4 rounded-2xl font-bold hover:bg-white/20 transition-all">
+                            Menu Utama
+                        </button>
+                    </div>
+                </div>
+
+            </main>
+
+            <!-- Footer -->
+            <footer class="p-6 text-center bg-black/40 border-t border-white/5 backdrop-blur-md">
+                <p class="text-slate-400 text-sm">
+                    © 2024 - <span class="text-sky-400 font-bold tracking-widest">@engkosSMKN11</span>
+                </p>
+                <p class="text-[10px] text-slate-500 mt-1 uppercase">Projek Media Pembelajaran Geografi SMK</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // Logika Gim
+        let player = { name: '', class: '' };
+        let mode = ''; 
+        let currentIdx = 0;
+        let score = 0;
+        let timer = 0;
+        let timerInt;
+        let isMusic = false;
+
+        const audio = document.getElementById('bgMusic');
+
+        // Data Soal & Gim
+        const quizData = [
+            {
+                title: "Konsep Dasar",
+                desc: "Apa tujuan utama dari dilakukannya mitigasi bencana?",
+                options: [
+                    { text: "Mengurangi risiko jatuhnya korban jiwa", correct: true, fb: "Benar! Fokus utama mitigasi adalah keselamatan manusia." },
+                    { text: "Menghentikan bencana agar tidak terjadi", correct: false, fb: "Bencana alam tidak bisa dihentikan, tapi dampaknya bisa dikurangi." },
+                    { text: "Mencari bantuan dari luar negeri", correct: false, fb: "Itu adalah bagian dari manajemen pasca bencana." }
+                ]
+            },
+            {
+                title: "Identifikasi Jalur",
+                desc: "Manakah tanda yang menunjukkan jalan keluar darurat saat terjadi gempa?",
+                options: [
+                    { text: "Tanda EXIT berwarna hijau", correct: true, fb: "Tepat! Jalur evakuasi ditandai dengan petunjuk arah berwarna hijau." },
+                    { text: "Tanda Dilarang Parkir", correct: false, fb: "Itu tanda lalu lintas, tidak membantu saat evakuasi." },
+                    { text: "Tanda Titik Kumpul", correct: false, fb: "Titik kumpul adalah tujuannya, bukan jalurnya." }
+                ]
+            }
+        ];
+
+        const gameData = [
+            {
+                title: "Tantangan: Gempa Bumi",
+                desc: "Tiba-tiba bumi bergetar! Kamu sedang di dalam kelas. Mana tindakan pertamamu?",
+                options: [
+                    { text: "Sembunyi di bawah meja kokoh", correct: true, fb: "Pilihan Pintar! Jaga kepala dan lehermu dari benda jatuh." },
+                    { text: "Loncat melalui jendela", correct: false, fb: "Sangat Berbahaya! Kamu bisa cedera parah akibat terjatuh." },
+                    { text: "Diam saja menunggu instruksi", correct: false, fb: "Jangan menunggu! Refleks perlindungan diri harus cepat." }
+                ]
+            },
+            {
+                title: "Tantangan: Kebakaran Lab",
+                desc: "Asap tebal mulai memenuhi ruangan praktik. Kamu harus keluar, bagaimana caranya?",
+                options: [
+                    { text: "Merangkak di bawah asap", correct: true, fb: "Luar Biasa! Udara bersih ada di bagian bawah ruangan." },
+                    { text: "Lari sambil menutup mata", correct: false, fb: "Jangan! Kamu akan tersesat dan menabrak benda tajam." },
+                    { text: "Berdiri tegak mencari pintu", correct: false, fb: "Salah! Asap panas berkumpul di atas dan sangat beracun." }
+                ]
+            }
+        ];
+
+        function handleLogin() {
+            const n = document.getElementById('in-name').value;
+            const c = document.getElementById('in-class').value;
+            if(!n || !c) return alert("Silakan isi nama dan kelas!");
+            
+            player = { name: n, class: c };
+            document.getElementById('display-identity').innerText = `${n} (${c})`;
+            showMenu();
+            if(!isMusic) toggleMusic();
+        }
+
+        function showMenu() {
+            hideAll();
+            document.getElementById('screen-menu').classList.remove('hidden');
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('musicBtn').classList.remove('hidden');
+            resetStats();
+        }
+
+        function showObjectives() {
+            hideAll();
+            document.getElementById('screen-objectives').classList.remove('hidden');
+        }
+
+        function startQuiz() {
+            mode = 'quiz';
+            initSession();
+        }
+
+        function startGame() {
+            mode = 'game';
+            initSession();
+        }
+
+        function initSession() {
+            hideAll();
+            document.getElementById('dashboard').classList.remove('hidden');
+            document.getElementById('screen-task').classList.remove('hidden');
+            currentIdx = 0;
+            score = 0;
+            timer = 0;
+            updateDashboard();
+            startTimer();
+            loadTask();
+        }
+
+        function loadTask() {
+            const data = mode === 'quiz' ? quizData : gameData;
+            const item = data[currentIdx];
+            
+            document.getElementById('task-icon').innerText = mode === 'quiz' ? "📝" : "🌩️";
+            document.getElementById('task-title').innerText = item.title;
+            document.getElementById('task-desc').innerText = item.desc;
+            
+            const box = document.getElementById('options-box');
+            box.innerHTML = '';
+            item.options.forEach(opt => {
+                const b = document.createElement('button');
+                b.className = "bg-white/10 hover:bg-sky-500/80 p-5 rounded-2xl text-left font-bold transition-all border border-white/5 hover:border-white/50 text-white shadow-lg btn-action";
+                b.innerText = opt.text;
+                b.onclick = () => processAnswer(opt);
+                box.appendChild(b);
+            });
+        }
+
+        function processAnswer(opt) {
+            hideAll();
+            document.getElementById('dashboard').classList.remove('hidden');
+            document.getElementById('screen-feedback').classList.remove('hidden');
+            
+            const fbIcon = document.getElementById('fb-icon');
+            const fbTitle = document.getElementById('fb-title');
+            
+            if(opt.correct) {
+                score += 50;
+                fbIcon.innerText = "⭐";
+                fbTitle.innerText = "TEPAT!";
+                fbTitle.className = "text-5xl font-black text-yellow-400";
+            } else {
+                fbIcon.innerText = "❌";
+                fbTitle.innerText = "SALAH!";
+                fbTitle.className = "text-5xl font-black text-red-500";
+            }
+            
+            document.getElementById('fb-text').innerText = opt.fb;
+            updateDashboard();
+
+            document.getElementById('fb-next').onclick = () => {
+                currentIdx++;
+                const data = mode === 'quiz' ? quizData : gameData;
+                if(currentIdx < data.length) {
+                    hideAll();
+                    document.getElementById('dashboard').classList.remove('hidden');
+                    document.getElementById('screen-task').classList.remove('hidden');
+                    loadTask();
+                } else {
+                    finishSession();
+                }
+            };
+        }
+
+        function finishSession() {
+            clearInterval(timerInt);
+            hideAll();
+            document.getElementById('screen-result').classList.remove('hidden');
+            document.getElementById('res-score').innerText = score;
+            document.getElementById('res-time').innerText = document.getElementById('timer').innerText;
+        }
+
+        function hideAll() {
+            ['screen-login', 'screen-menu', 'screen-objectives', 'screen-task', 'screen-feedback', 'screen-result'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+        }
+
+        function resetStats() {
+            score = 0;
+            timer = 0;
+            clearInterval(timerInt);
+            document.getElementById('live-score').innerText = 0;
+            document.getElementById('timer').innerText = "00:00";
+        }
+
+        function startTimer() {
+            timerInt = setInterval(() => {
+                timer++;
+                const m = Math.floor(timer/60).toString().padStart(2, '0');
+                const s = (timer%60).toString().padStart(2, '0');
+                document.getElementById('timer').innerText = `${m}:${s}`;
+            }, 1000);
+        }
+
+        function updateDashboard() {
+            document.getElementById('live-score').innerText = score;
+        }
+
+        function toggleMusic() {
+            if(isMusic) {
+                audio.pause();
+                document.getElementById('musicStatus').innerText = "🔇";
+            } else {
+                audio.play().catch(() => {});
+                document.getElementById('musicStatus').innerText = "🎵";
+            }
+            isMusic = !isMusic;
+        }
+    </script>
+</body>
+</html>
